@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tempetek.business.example.mymenu.entity.MenuInfo">
+
+  <resultMap id="menuInfoResultMap" type="com.tempetek.business.example.mymenu.entity.MenuInfo">
+	  <result property="code" column="CODE" />
+	  <result property="text" column="TEXT" />
+	  <result property="type" column="TYPE" />
+	  <result property="linkUrl" column="LINK_URL" />
+	  <result property="pid" column="PID" />
+	  <result property="sortValue" column="SORT_VALUE" />
+	  <result property="iconcls" column="ICONCLS" />
+	  <result property="arecls" column="AREACLS" />
+	  <result property="creator" column="CREATOR" />
+	  <result property="createTime" column="CREATE_TIME" />
+	  <result property="modifier" column="MODIFIER" />
+	  <result property="modifiedTime" column="MODIFIED_TIME" />
+	  <result property="description" column="DESCRIPTION" />
+  </resultMap>
+  
+  	<sql id="TABLE_NAME">TP_MENU</sql>
+
+	<sql id="PAGER_CONDITION">
+		<where>
+			<if test="condition.code!=null and condition.code!=''">
+				AND CODE LIKE "%"#{condition.code, jdbcType = VARCHAR}"%"
+			</if>
+
+			<if test="condition.text!=null and condition.text!=''">
+				AND TEXT LIKE "%"#{condition.text, jdbcType = VARCHAR}"%"
+			</if>
+
+			<if test="condition.type!=null and condition.type!=''">
+				AND TYPE = #{condition.type, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.linkUrl!=null and condition.linkUrl!=''">
+				AND LINK_URL = #{condition.linkUrl, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.pid!=null and condition.pid!=''">
+				AND PID = #{condition.pid, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.sortValue!=null and condition.sortValue!=''">
+				AND SORT_VALUE = #{condition.sortValue, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.iconcls!=null and condition.iconcls!=''">
+				AND ICONCLS = #{condition.iconcls, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.arecls!=null and condition.arecls!=''">
+				AND AREACLS = #{condition.arecls, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.creator!=null and condition.creator!=''">
+				AND CREATOR = #{condition.creator, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.createTime!=null and condition.createTime!=''">
+				AND CREATE_TIME = #{condition.createTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="condition.modifier!=null and condition.modifier!=''">
+				AND MODIFIER = #{condition.modifier, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.modifiedTime!=null and condition.modifiedTime!=''">
+				AND MODIFIED_TIME = #{condition.modifiedTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="condition.description!=null and condition.description!=''">
+				AND DESCRIPTION = #{condition.description, jdbcType = VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="SELECT_CONDITION">
+		<where>
+			<if test="code!=null and code!=''">
+				AND CODE = #{code, jdbcType = VARCHAR}
+			</if>
+
+			<if test="text!=null and text!=''">
+				AND TEXT = #{text, jdbcType = VARCHAR}
+			</if>
+
+			<if test="type!=null and type!=''">
+				AND TYPE = #{type, jdbcType = NUMERIC}
+			</if>
+
+			<if test="linkUrl!=null and linkUrl!=''">
+				AND LINK_URL = #{linkUrl, jdbcType = VARCHAR}
+			</if>
+
+			<if test="pid!=null and pid!=''">
+				AND PID = #{pid, jdbcType = NUMERIC}
+			</if>
+
+			<if test="sortValue!=null and sortValue!=''">
+				AND SORT_VALUE = #{sortValue, jdbcType = NUMERIC}
+			</if>
+
+			<if test="iconcls!=null and iconcls!=''">
+				AND ICONCLS = #{iconcls, jdbcType = VARCHAR}
+			</if>
+
+			<if test="arecls!=null and arecls!=''">
+				AND AREACLS = #{arecls, jdbcType = VARCHAR}
+			</if>
+
+			<if test="creator!=null and creator!=''">
+				AND CREATOR = #{creator, jdbcType = VARCHAR}
+			</if>
+
+			<if test="createTime!=null and createTime!=''">
+				AND CREATE_TIME = #{createTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="modifier!=null and modifier!=''">
+				AND MODIFIER = #{modifier, jdbcType = VARCHAR}
+			</if>
+
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				AND MODIFIED_TIME = #{modifiedTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="description!=null and description!=''">
+				AND DESCRIPTION = #{description, jdbcType = VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="INSERT_SQL">
+		INSERT INTO <include refid="TABLE_NAME" />(
+			ID,
+			CODE,
+			TYPE,
+			LINK_URL,
+			PID,
+			SORT_VALUE,
+			ICONCLS,
+			AREACLS,
+			CREATOR,
+			CREATE_TIME,
+			MODIFIER,
+			MODIFIED_TIME,
+			DESCRIPTION
+		)
+		VALUES(
+			#{id, jdbcType = NUMERIC},
+			#{code, jdbcType = VARCHAR},
+			#{type, jdbcType = NUMERIC},
+			#{linkUrl, jdbcType = VARCHAR},
+			#{pid, jdbcType = NUMERIC},
+			#{sortValue, jdbcType = NUMERIC},
+			#{iconcles, jdbcType = VARCHAR},
+			#{arecls, jdbcType = VARCHAR},
+			#{creator, jdbcType = VARCHAR},
+			#{createTime, jdbcType = TIMESTAMP},
+			#{modifier, jdbcType = VARCHAR},
+			#{modifiedTime, jdbcType = TIMESTAMP},
+			#{description, jdbcType = VARCHAR}
+		)
+	</sql>
+
+	<select id="findAll" resultMap="menuInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" />
+	</select>
+
+	<select id="findByCondition" resultMap="menuInfoResultMap" parameterType="com.tempetek.business.example.mymenu.entity.MenuInfo">
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="SELECT_CONDITION" />
+	</select>
+
+	<insert id="insert" databaseId="oracle" parameterType="com.tempetek.business.example.mymenu.entity.MenuInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<insert id="insert" databaseId="mysql" parameterType="com.tempetek.business.example.mymenu.entity.MenuInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<insert id="insert" databaseId="sqlserver" parameterType="com.tempetek.business.example.mymenu.entity.MenuInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<update id="update" parameterType="com.tempetek.business.example.people.entity.PeopleInfo">
+		UPDATE <include refid="TABLE_NAME" />
+		<set>
+			CODE = #{code, jdbcType = VARCHAR},
+			TYPE = #{type, jdbcType = NUMERIC},
+			LINK_URL = #{linkUrl, jdbcType = VARCHAR},
+			PID = #{pid, jdbcType = NUMERIC},
+			SORT_VALUE = #{sortValue, jdbcType = NUMERIC},
+			ICONCLS = #{iconcls, jdbcType = VARCHAR},
+			AREACLS = #{areacls, jdbcType = VARCHAR},
+			CREATOR = #{creator, jdbcType = VARCHAR},
+			CREATE_TIME = #{createTime, jdbcType = TIMESTAMP},
+			MODIFIER = #{modifier, jdbcType = VARCHAR},
+			MODIFIED_TIME = #{modifiedTime, jdbcType = TIMESTAMP},
+			DESCRIPTION = #{description, jdbcType = VARCHAR}
+		</set>
+		WHERE ID = #{id, jdbcType = NUMERIC}
+	</update>
+
+	<select id="selectPager" resultMap="menuInfoResultMap">
+		<include refid="_PUBLIC_V.PAGER_BEFORE" />
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="PAGER_CONDITION" />
+		ORDER BY ${pageOrder}
+		<include refid="_PUBLIC_V.PAGER_AFTER" />
+	</select>
+
+	<select id="countPager" resultType="long">
+		SELECT COUNT(1) FROM <include refid="TABLE_NAME" />
+		<include refid="PAGER_CONDITION" />
+	</select>
+
+	<delete id="deleteByIds" parameterType="java.lang.Long">
+		DELETE FROM <include refid="TABLE_NAME" /> WHERE ID IN
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+</mapper>

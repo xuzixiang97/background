@@ -1,0 +1,80 @@
+#parse("header.vm")
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/assets/css/login/login.css">
+</head>
+
+<body>
+	<div class="welcome" style="text-align:center;margin-top:100px;">
+		<img src="${rc.contextPath}/assets/image/login/title.png">
+	</div>
+	<div class="login-box">
+		<div class="login">
+			<h1 class="login-title">欢迎登录</h1>
+
+			<form id="loginForm" method="post" action="${rc.contextPath}/platform/login">
+				<input type="hidden" name="directPath" value="${rc.contextPath}/main" >
+
+				<div>
+					<span class="iconfont icon-user"></span>
+					<input class="input username" type="text" name="userName" placeholder="请输入账号">
+				</div>
+
+				<div>
+					<span class="iconfont icon-lock"></span>
+					<input class="input password" type="password" name="passWord" placeholder="请输入密码">
+				</div>
+
+				<div>
+					<span class="iconfont icon-shield"></span>
+					<input class="input code" type="text" name="captcha" placeholder="请输入验证码">
+					<span class="code-img">
+						<img id="captchaObj" style="border:solid 1px #ddd;border-radius:5px" src="${rc.contextPath}/platform/getCaptcha?width=189&height=38&number=5" onclick="modify()"/>
+					</span>
+					<div style="clear: both"></div>
+				</div>
+			</form>
+
+			<div>
+				<input class="input login-btn" type="button" onclick="login()" value="登录">
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+	function login(){
+		$('#loginForm').form('submit', {
+			success:function(o){
+				var data = jQuery.parseJSON(o);
+
+				if(data.status=="success"){
+					window.open(data.message, '_top');
+				}else{
+					$.messager.alert('提示', data.message, 'error', function(){
+						$("#login").focus();
+					});
+				}
+			}
+		});
+	}
+
+	function modify(){
+		var captchaObj = $("#captchaObj");
+		var src = captchaObj.attr("src");
+		captchaObj.attr("src", captchaUrl(src));
+	}
+
+	function captchaUrl(url){
+		var timestamp = (new Date()).valueOf();
+		var index = url.indexOf("?", url);
+
+		if (index > 0) {
+			return url + "&timestamp=" + timestamp
+		}
+		return url + "?timestamp=" + timestamp;
+	}
+	
+	if (window != top){
+		top.location.href = location.href;
+	}
+</script>
+</html>

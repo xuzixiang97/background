@@ -1,0 +1,123 @@
+#parse("header.vm")
+</head>
+
+<body class="easyui-layout" data-options="fit:true">
+	<div class="box-north-one" data-options="region:'north',border:false">
+		<form id="queryForm">
+			<table style="width:100%;padding-top:10px">
+				<tr height="40px">
+					<td>
+						<label class="textbox-label" style="text-align:right">用户名:</label>
+						<input class="easyui-textbox" name="username">
+						<label class="textbox-label" style="text-align:right">名称:</label>
+						#combox_person('personId', 'personId', '1', '', $!{userInfo.personid}, '', '', '所属人员不正确!')
+                        <a href="javascript:void(0)" class="easyui-linkbutton c4" data-options="iconCls:'iconfont icon-search'" style="position:absolute;right:90px" onclick="callback()">查询</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton c2" data-options="iconCls:'iconfont icon-reset'" style="position:absolute;right:20px" onclick="reset()">重置</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+	<div data-options="region:'center',border:false">
+		<div class="easyui-layout" data-options="fit:true">
+			<div data-options="region:'north',border:false" style="height:50px">
+				#button_common("btnToolBar", "panel-datagrid-header", $!{code})
+			</div>
+			<div data-options="region:'west',border:false" style="width:15px"></div>
+			<div data-options="region:'east',border:false" style="width:15px"></div>
+			<div data-options="region:'south',border:false" style="height:15px"></div>
+			<div data-options="region:'center',border:false">
+				<table id="loadGridList"></table>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+
+	var grid = $('#loadGridList').datagrid({
+		url: '${rc.contextPath}/example/user/list',
+		border: true,
+		remoteSort: true,
+		pagination: true,
+		rownumbers: true,
+		fit: true,
+		columns: [[
+			{field: 'ck', title: '全选', width: 50, checkbox: true},
+	        {field: 'username', title: '用户名', width: 150, halign: 'center', align: 'left'},
+            {field: 'personStr', title: '名称', width: 150, halign: 'center', align: 'left'},
+            {field: 'isLockedStr', title: '是否锁定', width: 120, halign: 'center', align: 'left'},
+            {field: 'description', title: '备注', width: 180, halign: 'center', align: 'left'},
+            {field: 'chushihua',title: '初始化密码',width: 100, formatter: Initialization}
+		]],
+		pageSize: 20,
+		pageList: [10, 20, 30, 50, 100],
+		sortName: 'ID',
+		sortOrder: 'DESC'
+	});
+
+	function callback(){
+        if($("#queryForm").form("validate")){
+            grid.datagrid("load", $("#queryForm").serializeObject());
+        }
+	}
+
+    function Initialization(value,row,index){
+        return '<a style="color:blue" href="#">'+"初始化密码"+'</a>';
+    }
+	
+	function reset(){
+		$("#queryForm").form("reset");
+	}
+	
+	function add(){
+		jspop_dialog("jspop_dialog", "新增", "${rc.contextPath}/example/user/index", 650, 380, callback, true, true);
+	}
+	
+	function edit(){
+		var rows = grid.datagrid('getSelections');
+		
+		if(rows.length>1||rows.length==0){
+			$.messager.alert('提示', '请选择一条账户信息!', 'error');
+			return;
+		}
+		
+		jspop_dialog("jspop_dialog", "修改", "${rc.contextPath}/example/user/index?id=" + rows[0].id, 650, 380, callback, true, true);
+	}
+	
+	function del(){
+		var ids_ = [];
+		var rows = grid.datagrid('getSelections');
+		
+		if(rows.length == 0){
+			$.messager.alert('提示', '请选择至少一条账户信息!', 'error');
+			return;
+		}
+
+		$.messager.confirm('提示', '是否确定删除?', function(o){
+			if(o){
+				for(var i = 0;i < rows.length;i++){
+					ids_.push(rows[i].id)
+				}
+
+				$.ajax({
+					type: "post",
+					dataType: "json",
+					url: "${rc.contextPath}/example/user/delete",
+					data: {ids:ids_.join(',')},
+					success: function(o){
+						if(o.status == "success"){
+							$.messager.alert('提示', o.message, 'info');
+							callback();
+						}else{
+							$.messager.alert('提示', o.message, 'error');
+						}
+					}
+				});
+			}
+		});
+	}
+
+</script>
+</html>

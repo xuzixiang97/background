@@ -1,0 +1,214 @@
+#parse("header.vm")
+</head>
+
+<body class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center',border:false">
+        <div class="easyui-layout" data-options="fit:true" >
+			<div data-options="region:'north',border:false" style="height:0px">
+			</div>
+			<div data-options="region:'west',border:false" style="width:220px">
+                #button_common("btnToolBar", "panel-datagrid-header", $!{code},'IN[ROLE_AD,ROLE_DELETE,ROLE_UPDATE]')
+                <ul id="loadTree"></ul>
+            </div>
+			<div data-options="region:'east',border:false" style="width:15px"></div>
+			<div data-options="region:'south',border:false" style="height:0px">
+                <input type="hidden" id="role" name="roleId" value="$!{userAndRoleInfo.roleId}">
+
+            </div>
+			<div data-options="region:'center',border:false">
+                <div id="padding" style="height:15px"></div>
+                <div class="easyui-tabs" style="width:100%;height:95%">
+                    <div title="用户权限" >
+                        #button_common("btnToolBar", "panel-datagrid-header", $!{code},'IN[ROLE_REDO,ROLE_UNDO]')
+                        <div id="gird" style="height: 90% ; width: 100%">
+                            <div id="loadGridList""></div>
+                        </div>
+
+                    </div>
+                    <div title="菜单权限" >
+                        #button_common("btnToolBar", "panel-datagrid-header", $!{code},'IN[ROLEMENU_UPDATE]')
+                        <ul id="meauTree"></ul>
+                    </div>
+                </div>
+			</div>
+		</div>
+    </div>
+</body>
+<script type="text/javascript">
+
+    $("#loadTree").tree({
+        url:'${rc.contextPath}/example/role/tree',
+        lines: true,
+        animate: true,
+        onClick: function(node) {
+            var id = node.id;
+
+            $("#role").val(id);
+            $('#loadGridList').datagrid('load', '${rc.contextPath}/example/user/listByRoleId?id='+id);
+            $("#meauTree").tree("options").url='${rc.contextPath}/example/menu/tree?id='+id;
+            $('#meauTree').tree('reload');
+        },
+
+        onLoadSuccess: function(node, data) {
+            if (data.length > 0) {
+                var n = $('#loadTree').tree('find', data[0].id);
+
+                $("#role").val(data[0].id);
+                $('#loadTree').tree('select', n.target);
+                $('#loadGridList').datagrid('load', '${rc.contextPath}/example/user/listByRoleId?id='+data[0].id);
+                $("#meauTree").tree("options").url='${rc.contextPath}/example/menu/tree?id='+data[0].id;
+                $('#meauTree').tree('reload');
+            }
+        }
+    });
+
+    var grid = $('#loadGridList').datagrid({
+        border: true,
+        remoteSort: true,
+        pagination: true,
+        rownumbers: true,
+        fit: true,
+        columns: [[
+            {field: 'ck', title: '全选', width: 50, checkbox:true},
+            {field: 'username', title: '用户名', width: 150, halign: 'center', align: 'left'},
+            {field: 'personStr', title: '名称', width: 150, halign: 'center', align: 'left'},
+            {field: 'isLockedStr', title: '是否锁定', width: 120, halign: 'center', align: 'left'},
+            {field: 'description', title: '备注', width: 280, halign: 'center', align: 'left'}
+        ]],
+        pageSize: 20,
+        pageList: [10, 20, 30, 50, 100],
+        sortName: 'ID',
+        sortOrder: 'DESC',
+    });
+
+    $('#meauTree').tree({
+        lines: true, //显示树线条
+        checkbox: true, //显示复选框
+        animate: true //展开动画效果
+    });
+
+    function callback(){
+        $("#loadGridList").datagrid("reload");
+    }
+
+    function refshtree(){
+        parent.location.reload();
+    }
+
+    function reset(){
+        $("#queryForm").form("reset");
+    }
+
+    function add(){
+        var selectedNode = $("#loadTree").tree("getSelected");
+
+        if(selectedNode == null){
+            $.messager.alert('提示', '请选择节点', 'error');
+            return;
+        }
+        jspop_dialog("jspop_dialog", "新增", "${rc.contextPath}/example/role/add?id="+ selectedNode.id, 650, 380, callback, true, true);
+    }
+
+
+    function redo(){
+        var selectedNode = $("#loadTree").tree("getSelected");
+
+        if(selectedNode.length>1 || selectedNode.length == 0){
+            $.messager.alert('提示', '请选择一条账户信息!', 'error');
+            return;
+        }
+        jspop_dialog("jspop_dialog", "分配角色", "${rc.contextPath}/example/role/userDialog?id="+ selectedNode.id, 730, 520, callback, true, true);
+    }
+
+    function undo(){
+        var ids_ = [];
+        var rows = $("#loadGridList").datagrid('getSelections');
+
+        if(rows.length == 0){
+            $.messager.alert('提示', '请选择至少一条账户信息!', 'error');
+            return;
+        }
+
+        $.messager.confirm('提示', '是否确定删除?', function(o){
+            if(o){
+                for (var i = 0; i < rows.length; i++){
+                    ids_.push(rows[i].id)
+                }
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url:"${rc.contextPath}/example/userAndRole/delete",
+                    data:{ids: ids_.join(','),roleId: $("#role").val()},
+                    success:function(o){
+                        if(o.status == "success"){
+                            $.messager.alert('提示', o.message, 'info');
+                            callback();
+                        }else{
+                            $.messager.alert('提示', o.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function edit(){
+        var selectedNode = $("#loadTree").tree("getSelected");
+
+        if(selectedNode == null){
+            $.messager.alert('提示', '请选择节点', 'error');
+            return;
+        }
+        jspop_dialog("jspop_dialog", "修改", "${rc.contextPath}/example/role/edit?id=" + selectedNode.id, 650, 380, callback, true, true);
+    }
+
+    function saveMenu(){
+        var ids_ = [];
+        var rows = $("#meauTree").tree("getChecked");
+
+        $.messager.confirm('提示', '是否确定?', function(o){
+            if(o){
+                for(var i=0;i<rows.length;i++){
+                    ids_.push(rows[i].id)
+                }
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "${rc.contextPath}/example/roleAndMenu/save",
+                    data: {ids: ids_.join(','),roleId: $("#role").val()},
+                    success:function(o){
+                        if(o.status == "success"){
+                            $.messager.alert('提示', o.message, 'info');
+                        }else{
+                            $.messager.alert('提示', o.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function del(){
+        var selectedNode = $("#loadTree").tree("getSelected");
+
+        $.messager.confirm('提示', '是否确定删除?', function(o){
+            if(o){
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url:"${rc.contextPath}/example/role/delete?id="+ selectedNode.id,
+                    success:function(o){
+                        if(o.status == "success"){
+                            location.reload();
+                            $.messager.alert('提示', o.message, 'info');
+                        }else{
+                            $.messager.alert('提示', o.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+</html>

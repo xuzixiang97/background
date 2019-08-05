@@ -1,0 +1,155 @@
+#parse("header.vm")
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/assets/css/main/menu.css">
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/assets/css/main/font-awesome.css">
+<script type="text/javascript" src="${rc.contextPath}/assets/js/jquery/jquery-accordion-menu.js"></script>
+</head>
+
+<body class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'north',border:false" style="height:60px;overflow:hidden;background:#223045">
+		<div class="logo">坦佩信息管理系统</div>
+		<div class="toolbar">
+			<div class="tool-item">欢迎您, $!{name}</div>
+			<a class="tool-item" href="${rc.contextPath}/platform/main" target="_blank"><i class="fa fa-cog"></i> 设置</a>
+			<a class="tool-item" href="javascript:void(0)" onclick="editpwd($!{userid});"><i class="fa fa-lock"></i> 修改密码</a>
+			<a class="tool-item" href="${rc.contextPath}/logout"><i class="fa fa-sign-out"></i> 退出</a>
+		</div>
+	</div>
+
+	<div data-options="region:'west',border:false" style="width:220px;background:#344a6a">
+		<div id="main_panel" class="jquery-accordion-menu red">
+			<ul id="main_menu">
+			</ul>
+		</div>
+	</div>
+
+	<div data-options="region:'center',border:false">
+		<div class="easyui-layout" data-options="fit:true,border:true">
+			<div data-options="region:'center',border:false,plain:true">
+				<div id="tabDiv" class="easyui-tabs" data-options="plain:true,border:false" style="height:100%;padding-top:5px">
+				</div>
+			</div>
+			
+			#parse("footer.vm")
+		</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+	var content = "";
+	
+	$.each(${menuList}, function(i, n) {
+		content += "<li>";
+		content += initMenu(n.attribute.code, n.text, n.attribute.linkUrl, n.attribute.iconCls);
+		content += "<ul class='submenu'>";
+		
+		if(n.children){
+			$.each(n.children, function(j, m) {
+				content += "<li>";
+				content += initMenu(m.attribute.code, m.text, m.attribute.linkUrl, m.attribute.iconCls);
+				content += "</li>";
+			});
+		}
+		
+		content += "</ul>";
+		content += "</li>";
+	});
+	
+	function initMenu(code, text, linkUrl, iconCls){
+		var url = "${rc.contextPath}" + linkUrl + "?code=" + code + "&title=" + text;
+		return "<a href='#' onclick='loadFrame(\"" + text + "\",\"" + url + "\")'><i class='" + iconCls + "'></i>" + text + "</a>";
+	}
+	
+	$("#main_menu").html(content);
+	
+	function editpwd(userid){
+		jspop_dialog("jspop_dialog", "修改密码", "${rc.contextPath}/platform/auth/myuser/editpwd?id=" + userid, 350, 250, null, true, true);
+	}
+	
+	function loadFrame(title, url){
+		if(url!=""){
+			var content = "<iframe height='100%' width='100%' style='min-width:1366px;min-height:798px;frameborder:0;allowtransparency:true;border:none;padding:15px;margin-bottom:-5px;background:#f6f5fa' src='" + url + "'></iframe>";
+			
+	        if ($('#tabDiv').tabs('exists', title)) {
+	        	var tab = $("#tabDiv").tabs('getTab', title);
+	        	
+	            $('#tabDiv').tabs('update',{
+	                tab:tab,
+	                options:{
+	                    title:title,
+	                    content:content,
+	                    closable:true
+	                }
+	            });
+	            $('#tabDiv').tabs('select', title)
+	        } else {
+	            $('#tabDiv').tabs('add',{
+	                title:title,
+	                content:content,
+	                closable:true
+	            });
+	        }
+		}
+	}
+	
+    jQuery(document).ready(function () {
+        jQuery("#main_panel").jqueryAccordionMenu();
+    });
+    
+    $("#main_menu>li").click(function(){
+        $("#main_menu>li.active").removeClass("active");
+        $(this).addClass("active");
+    });
+    
+    $(".submenu>li a").click(function(e){
+        $(this).parent().siblings().removeClass("active2");
+        $(this).parent().addClass("active2");
+    });
+    
+    $("#main_menu").on('mouseenter','.item-mini',function () {
+        $(this).children("ul").css("display","block");
+    });
+    
+    $("#main_menu").on('mouseleave','.item-mini',function () {
+        $(this).children("ul").css("display","none");
+    });
+    
+    $(function(){
+    	$("#main_menu>li:first").click();
+   	    $("#main_menu>li ul:first").css("display","block");
+   	    $("#main_menu>li ul:first li:first a").click();
+    	
+	    $.expr[":"].Contains = function(a, i, m) {
+			return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+		}
+		
+		function filterList(header, list) {
+			var form = $("<form>").attr({
+				"class":"filterform",
+				action:"#"
+			}), input = $("<input>").attr({
+				"class":"filterinput",
+				type:"text"
+			});
+			
+			$(form).append(input).appendTo(header);
+			
+			$(input).change(function() {
+				var filter = $(this).val();
+				
+				if (filter) {
+					$matches = $(list).find("a:Contains(" + filter + ")").parent();
+					$("li", list).not($matches).slideUp();
+					$matches.slideDown();
+				} else {
+					$(list).find("li").slideDown();
+				}
+				return false;
+			}).keyup(function() {
+				$(this).change();
+			});
+		}
+		
+		filterList($("#form"), $("#main_menu"));
+	});
+</script>
+</html>

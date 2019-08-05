@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tempetek.business.example.account.entity.AccountInfo">
+
+  <resultMap id="accountInfoResultMap" type="com.tempetek.business.example.account.entity.AccountInfo">
+	 <result property="accountName" column="ACCOUNT_NAME" />
+	 <result property="accountPwd" column="ACCOUNT_PWD" />
+	 <result property="locked" column="LOCKED" />
+	 <result property="personid" column="PERSON_ID" />
+	 <result property="type" column="TYPE" />
+  </resultMap>
+  
+  <sql id="TABLE_NAME">CS_ACCOUNT</sql>
+  
+  <sql id="PAGER_CONDITION">
+  	 <where>
+ 		<if test="condition.accountName!=null and condition.accountName!=''">
+   	    	AND ACCOUNT_NAME LIKE "%"#{condition.accountName, jdbcType = VARCHAR}"%"
+    	</if>
+  
+  		<if test="condition.personid!=null and condition.personid!=''">
+   	    	AND PERSON_ID LIKE "%"#{condition.personid, jdbcType = NUMERIC}"%"
+    	</if>
+ 	 </where>
+  </sql>
+  
+  <sql id="SELECT_CONDITION">
+  	 <where>
+ 		<if test="accountName!=null and accountName!=''">
+   	    	AND ACCOUNT_NAME = #{accountName, jdbcType = VARCHAR}
+    	</if>
+  
+  		<if test="personid!=null and personid!=''">
+   	    	AND PERSON_ID = #{personid, jdbcType = NUMERIC}
+    	</if>
+   	 </where>
+  </sql>
+
+	
+
+  <sql id="INSERT_SQL">
+  	 INSERT INTO <include refid="TABLE_NAME" />(
+	 	ID,
+		ACCOUNT_NAME,
+		ACCOUNT_PWD,
+		LOCKED,
+		PERSON_ID,
+		TYPE
+	 )
+	 VALUES(
+	 	#{id, jdbcType = NUMERIC},
+		#{accountName, jdbcType = VARCHAR},
+		#{accountPwd, jdbcType = VARCHAR},
+		#{locked, jdbcType = NUMERIC},
+		#{personid, jdbcType = NUMERIC},
+		#{type, jdbcType = VARCHAR}
+	 )
+  </sql>
+  
+  <select id="findById" resultMap="accountInfoResultMap" parameterType="java.lang.Long">
+     SELECT * FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.Long">
+  	 DELETE FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+  </delete>
+  
+  <insert id="insert" databaseId="oracle" parameterType="com.tempetek.business.example.account.entity.AccountInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+  
+  <insert id="insert" databaseId="mysql" parameterType="com.tempetek.business.example.account.entity.AccountInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+  
+  <insert id="insert" databaseId="sqlserver" parameterType="com.tempetek.business.example.account.entity.AccountInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+  
+  <update id="update" parameterType="com.tempetek.business.example.account.entity.AccountInfo">
+     UPDATE <include refid="TABLE_NAME" />
+	 <set>
+		ACCOUNT_NAME = #{accountName, jdbcType = VARCHAR},		
+		ACCOUNT_PWD = #{accountPwd, jdbcType = VARCHAR},
+		LOCKED = #{locked, jdbcType = NUMERIC},
+		PERSON_ID = #{personid, jdbcType = NUMERIC},
+		TYPE = #{type, jdbcType = VARCHAR}		
+	 </set>
+	 WHERE ID = #{id, jdbcType = NUMERIC}
+  </update>
+  
+  <select id="findByCondition" resultMap="accountInfoResultMap" parameterType="com.tempetek.business.example.account.entity.AccountInfo">
+     SELECT * FROM <include refid="TABLE_NAME" />
+     <include refid="SELECT_CONDITION" />
+  </select>
+  
+  <select id="selectPager" resultMap="accountInfoResultMap">
+  	 <include refid="_PUBLIC_V.PAGER_BEFORE" />
+	 SELECT * FROM <include refid="TABLE_NAME" />
+  	 <include refid="PAGER_CONDITION" />
+  	 ORDER BY ${pageOrder}
+	 <include refid="_PUBLIC_V.PAGER_AFTER" />
+  </select>
+	
+  <select id="countPager" resultType="long">
+	 SELECT COUNT(1) FROM <include refid="TABLE_NAME" />
+	 <include refid="PAGER_CONDITION" />
+  </select>
+  
+  <delete id="deleteByIds" parameterType="java.lang.Long">
+  	 DELETE FROM <include refid="TABLE_NAME" /> WHERE ID IN
+  	 <foreach item="item" collection="array" open="(" separator="," close=")">
+  	 	#{item}
+  	 </foreach>
+  </delete>
+  
+</mapper>

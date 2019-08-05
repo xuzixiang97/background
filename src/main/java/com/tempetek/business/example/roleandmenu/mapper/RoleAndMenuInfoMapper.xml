@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+
+  <resultMap id="roleandmenuInfoResultMap" type="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+	  <result property="id" column="ID" />
+	  <result property="roleId" column="ROLE_ID" />
+	  <result property="menuId" column="MENU_ID" />
+  </resultMap>
+  
+  	<sql id="TABLE_NAME">TP_ROLE_MENU</sql>
+
+	<sql id="PAGER_CONDITION">
+		<where>
+			<if test="condition.roleId!=null and condition.roleId!=''">
+				AND ROLE_ID = = #{condition.roleId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.menuId!=null and condition.menuId!=''">
+				AND MENU_ID = #{condition.menuId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="SELECT_CONDITION">
+		<where>
+			<if test="roleId!=null and roleId!=''">
+				AND ROLE_ID = #{roleId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="menuId!=null and menuId!=''">
+				AND MENU_ID = #{menuId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+  <sql id="INSERT_SQL">
+  	 INSERT INTO <include refid="TABLE_NAME" />(
+	 	ID,
+	  	ROLE_ID,
+	  	MENU_ID
+	 )
+	 VALUES(
+	 	#{id, jdbcType = NUMERIC},
+		#{roleId, jdbcType = NUMERIC},
+		#{menuId, jdbcType = NUMERIC}
+	 )
+  </sql>
+  
+  <select id="findById" resultMap="roleandmenuInfoResultMap" parameterType="java.lang.Long">
+     SELECT * FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+  </select>
+
+	<select id="findByRoleidAndMenuid" resultMap="roleandmenuInfoResultMap" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ROLE_ID = #{roleId, jdbcType = NUMERIC}
+		AND MENU_ID = #{menu_id, jdbcType = NUMERIC}
+	</select>
+
+	<select id="findByRoleid" resultMap="roleandmenuInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ROLE_ID = #{roleId, jdbcType = NUMERIC}
+	</select>
+  
+  <delete id="deleteById" parameterType="java.lang.Long">
+  	 DELETE FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+  </delete>
+  
+  <insert id="insert" databaseId="oracle" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+  
+  <insert id="insert" databaseId="mysql" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+  
+  <insert id="insert" databaseId="sqlserver" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+  	 <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+  	 	<include refid="_PUBLIC_V.SELECT_KEY" />
+	 </selectKey>
+	 <include refid="INSERT_SQL" />
+  </insert>
+
+	<select id="findByCondition" resultMap="roleandmenuInfoResultMap" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="SELECT_CONDITION" />
+	</select>
+  
+  <update id="update" parameterType="com.tempetek.business.example.roleandmenu.entity.RoleAndMenuInfo">
+     UPDATE <include refid="TABLE_NAME" />
+	 <set>
+		ROLE_ID = #{roleId, jdbcType = NUMERIC},
+		MENU_ID = #{menuId, jdbcType = NUMERIC}
+	 </set>
+	 	WHERE ID = #{id, jdbcType = NUMERIC}
+  </update>
+
+  <delete id="deleteByIds" parameterType="java.lang.Long">
+  	 DELETE FROM <include refid="TABLE_NAME" /> WHERE ID IN
+  	 <foreach item="item" collection="array" open="(" separator="," close=")">
+  	 	#{item}
+  	 </foreach>
+  </delete>
+  
+</mapper>

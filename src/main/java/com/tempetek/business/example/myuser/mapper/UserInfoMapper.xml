@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tempetek.business.example.myuser.entity.UserInfo">
+
+	<resultMap id="userInfoResultMap" type="com.tempetek.business.example.myuser.entity.UserInfo">
+		<result property="id" column="ID" />
+		<result property="username" column="USERNAME" />
+		<result property="password" column="PASSWORD" />
+		<result property="personId" column="PERSON_ID" />
+		<result property="isLocked" column="IS_LOCKED" />
+		<result property="creator" column="CREATOR" />
+		<result property="createTime" column="CREATE_TIME" />
+		<result property="modifier" column="MODIFIER" />
+		<result property="modifiedTime" column="MODIFIED_TIME" />
+		<result property="description" column="DESCRIPTION" />
+	</resultMap>
+
+	<sql id="TABLE_NAME">TP_USER</sql>
+
+	<sql id="PAGER_CONDITION">
+		<where>
+			<if test="condition.username!=null and condition.username!=''">
+				AND USERNAME LIKE "%"#{condition.username, jdbcType = VARCHAR}"%"
+			</if>
+
+			<if test="condition.password!=null and condition.password!=''">
+				AND PASSWORD = #{condition.password, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.personId!=null and condition.personId!=''">
+				AND PERSON_ID = #{condition.personId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.isLocked!=null and condition.isLocked!=''">
+				AND IS_LOCKED = #{condition.isLocked, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.creator!=null and condition.creator!=''">
+				AND CREATOR = #{condition.creator, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.createTime!=null and condition.createTime!=''">
+				AND CREATE_TIME = #{condition.createTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="condition.modifier!=null and condition.modifier!=''">
+				AND MODIFIER = #{condition.modifier, jdbcType = VARCHAR}
+			</if>
+
+			<if test="condition.modifiedTime!=null and condition.modifiedTime!=''">
+				AND MODIFIED_TIME = #{condition.modifiedTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="condition.description!=null and condition.description!=''">
+				AND DESCRIPTION = #{condition.description, jdbcType = VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="SELECT_CONDITION">
+		<where>
+			<if test="username!=null and username!=''">
+				AND USERNAME = #{username, jdbcType = VARCHAR}
+			</if>
+
+			<if test="password!=null and password!=''">
+				AND PASSWORD = #{password, jdbcType = VARCHAR}
+			</if>
+
+			<if test="personId!=null and personId!=''">
+				AND PERSON_ID = #{personId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="isLocked!=null and isLocked!=''">
+				AND IS_LOCKED = #{isLocked, jdbcType = NUMERIC}
+			</if>
+
+			<if test="creator!=null and creator!=''">
+				AND CREATOR = #{creator, jdbcType = VARCHAR}
+			</if>
+
+			<if test="createTime!=null and createTime!=''">
+				AND CREATE_TIME = #{createTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="modifier!=null and modifier!=''">
+				AND MODIFIER = #{modifier, jdbcType = VARCHAR}
+			</if>
+
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				AND MODIFIED_TIME = #{modifiedTime, jdbcType = TIMESTAMP}
+			</if>
+
+			<if test="description!=null and description!=''">
+				AND DESCRIPTION = #{description, jdbcType = VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="INSERT_SQL">
+		INSERT INTO <include refid="TABLE_NAME" />(
+			ID,
+			USERNAME,
+			PASSWORD,
+			PERSON_ID,
+			IS_LOCKED,
+			CREATOR,
+			CREATE_TIME,
+			MODIFIER,
+			MODIFIED_TIME,
+			DESCRIPTION
+		)
+		VALUES(
+			#{id, jdbcType = NUMERIC},
+			#{username, jdbcType = VARCHAR},
+			#{password, jdbcType = VARCHAR},
+			#{personId, jdbcType = NUMERIC},
+			#{isLocked, jdbcType = NUMERIC},
+			#{creator, jdbcType = VARCHAR},
+			#{createTime, jdbcType = TIMESTAMP},
+			#{modifier, jdbcType = VARCHAR},
+			#{modifiedTime, jdbcType = TIMESTAMP},
+			#{description, jdbcType = VARCHAR}
+		)
+	</sql>
+
+	<insert id="insert" databaseId="oracle" parameterType="com.tempetek.business.example.myuser.entity.UserInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<insert id="insert" databaseId="mysql" parameterType="com.tempetek.business.example.myuser.entity.UserInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<insert id="insert" databaseId="sqlserver" parameterType="com.tempetek.business.example.myuser.entity.UserInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<update id="update" parameterType="com.tempetek.business.example.myuser.entity.UserInfo">
+		UPDATE <include refid="TABLE_NAME" />
+		<set>
+            USERNAME = #{username, jdbcType = VARCHAR},
+			PASSWORD = #{password, jdbcType = VARCHAR},
+			PERSON_ID = #{personId, jdbcType = NUMERIC},
+			IS_LOCKED = #{isLocked, jdbcType = NUMERIC},
+			CREATOR = #{creator, jdbcType = VARCHAR},
+			CREATE_TIME = #{createTime, jdbcType = TIMESTAMP},
+			MODIFIER = #{modifier, jdbcType = VARCHAR},
+			MODIFIED_TIME = #{modifiedTime, jdbcType = TIMESTAMP},
+			DESCRIPTION = #{description, jdbcType = VARCHAR}
+		</set>
+		WHERE ID = #{id, jdbcType = NUMERIC}
+	</update>
+
+	<select id="findByCondition" resultMap="userInfoResultMap" parameterType="com.tempetek.business.example.myuser.entity.UserInfo">
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="SELECT_CONDITION" />
+	</select>
+
+	<select id="findById" resultMap="userInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+	</select>
+
+	<select id="findByUserName" resultMap="userInfoResultMap" parameterType="java.lang.String">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE USERNAME = #{username, jdbcType = VARCHAR}
+	</select>
+
+	<select id="findByPersonId" resultMap="userInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE PERSON_ID = #{personId, jdbcType = NUMERIC}
+	</select>
+
+	<sql id="PAGER_CONDITIONA">
+		<where>
+			<if test="condition.roleId!=null and condition.roleId!=''">
+				AND ROLE_ID = #{condition.roleId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="PAGER_CONDITIONB">
+		<where>
+			id  not in (SELECT tp_user.id FROM tp_user
+			JOIN tp_user_role
+			ON tp_user.ID=tp_user_role.USER_ID
+			<include refid="PAGER_CONDITIONA" />)
+			<if test="condition.username!=null and condition.username!=''">
+				AND USERNAME LIKE "%"#{condition.username, jdbcType = VARCHAR}"%"
+			</if>
+
+			<if test="condition.personId!=null and condition.personId!=''">
+				AND PERSON_ID = #{condition.personId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectPagerRole" resultMap="userInfoResultMap">
+		<include refid="_PUBLIC_V.PAGER_BEFORE" />
+		SELECT tp_user.*,tp_user_role.ROLE_ID FROM tp_user
+		LEFT JOIN tp_user_role
+    	ON tp_user.ID=tp_user_role.USER_ID
+		<include refid="PAGER_CONDITIONA" />
+		ORDER BY ${pageOrder}
+		<include refid="_PUBLIC_V.PAGER_AFTER" />
+	</select>
+
+	<select id="selectPagerNotRole" resultMap="userInfoResultMap">
+		<include refid="_PUBLIC_V.PAGER_BEFORE" />
+		select * from tp_user
+		<include refid="PAGER_CONDITIONB" />
+		ORDER BY ${pageOrder}
+		<include refid="_PUBLIC_V.PAGER_AFTER" />
+	</select>
+
+	<select id="selectPager" resultMap="userInfoResultMap">
+		<include refid="_PUBLIC_V.PAGER_BEFORE" />
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="PAGER_CONDITION" />
+		ORDER BY ${pageOrder}
+		<include refid="_PUBLIC_V.PAGER_AFTER" />
+	</select>
+
+	<select id="findByIds" resultMap="userInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ID IN
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="countPagerRole" resultType="long">
+		SELECT COUNT(1) FROM tp_user
+		LEFT JOIN tp_user_role
+		ON tp_user.ID=tp_user_role.USER_ID
+		<include refid="PAGER_CONDITIONA" />
+	</select>
+
+	<select id="countPagerNotRole" resultType="long">
+		select COUNT(1) from tp_user where id  not in (SELECT tp_user.id FROM tp_user
+		JOIN tp_user_role
+		ON tp_user.ID=tp_user_role.USER_ID
+		<include refid="PAGER_CONDITIONA" />)
+	</select>
+
+	<select id="countPager" resultType="long">
+		SELECT COUNT(1) FROM <include refid="TABLE_NAME" />
+		<include refid="PAGER_CONDITION" />
+	</select>
+
+	<delete id="deleteById" parameterType="java.lang.Long">
+		DELETE FROM <include refid="TABLE_NAME" /> WHERE ID = #{id, jdbcType = NUMERIC}
+	</delete>
+
+	<delete id="deleteByIds" parameterType="java.lang.Long">
+		DELETE FROM <include refid="TABLE_NAME" /> WHERE ID IN
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+</mapper>

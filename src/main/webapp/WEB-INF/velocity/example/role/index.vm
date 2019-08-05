@@ -1,0 +1,72 @@
+#parse("header.vm")
+</head>
+
+<body class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center',border:false">
+		<form id="jspopForm" method="post" action="${rc.contextPath}/example/role/save">
+			<input type="hidden" name="id" id="id" value="$!{roleInfo.id}">
+            <input type="hidden" name="pid" value="$!{roleInfo.pid}">
+			
+			<table style="width:100%">
+				<tr height="10px"></tr>
+				
+				<tr height="40px">
+					<td align="right">
+						<label class="textbox-label" style="text-align:right">编号:</label>
+					</td>
+					<td>
+                        <input class="easyui-textbox" name="code" value="$!{roleInfo.code}" style="width:171px;" data-options="required:true,missingMessage:'编号不能为空!',validType:['unique[\'${rc.contextPath}/example/role/codeUnique\',\'code\',\'id\']','length[0,32]'],invalidMessage:'编号不能重复且长度不能超过32位!'" >
+					</td>
+					
+					<td align="right">
+						<label class="textbox-label" style="text-align:right">名称:</label>
+					</td>
+					<td>
+						<input class="easyui-textbox" name="name" value="$!{roleInfo.name}" style="width:171px;" data-options="required:true,missingMessage:'名称不能为空!',validType:'length[0,16]',invalidMessage:'名称长度不能大于16!'" >
+					</td>
+				</tr>
+
+                <tr height="40px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">是否管理员:</label>
+                    </td>
+                    <td>
+                        #radio_dictionary('isAdmin', 'isAdmin', 'TP_ROLE_ADMIN', $!{roleInfo.isAdmin})
+                    </td>
+                </tr>
+
+                <tr height="80px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">描述:</label>
+                    </td>
+                    <td colspan="3">
+                        <input class="easyui-textbox" name="description" value="$!{roleInfo.description}" style="height:80px;width:500px;" data-options="multiline:true,validType:'length[0,256]',invalidMessage:'描述长度不能大于256!'" >
+                    </td>
+                </tr>
+			</table>
+	    </form>
+	</div>
+</body>
+<script type="text/javascript">
+
+    function jspop_save(){
+        $("#jspopForm").form('submit', {
+            success:function(o){
+                var data = jQuery.parseJSON(o);
+
+                if(data.status == "success"){
+                    $("input[name=id]").val(data.data);
+                    $.messager.alert('提示', data.message, 'info', function(){
+                        parent.location.reload();
+                        jspop_dialog_close("jspop_dialog");
+                       parent.location.reload();
+                    });
+                }else{
+                    $.messager.alert('提示', data.message, 'error');
+                }
+            }
+        });
+    }
+
+</script>
+</html>

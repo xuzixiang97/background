@@ -1,0 +1,117 @@
+#parse("header.vm")
+</head>
+
+<body class="easyui-layout" data-options="fit:true">
+	<div data-options="region:'center',border:false">
+		<form id="jspopForm" method="post" action="${rc.contextPath}/example/person/save">
+			<input type="hidden" name="id" id="id" value="$!{peopleInfo.id}">
+			
+			<table style="width:100%">
+				<tr height="10px"></tr>
+				
+				<tr height="40px">
+					<td align="right">
+						<label class="textbox-label" style="text-align:right">编号:</label>
+					</td>
+					<td>
+                        <input class="easyui-textbox" name="code" value="$!{peopleInfo.code}" style="width:171px;" data-options="required:true,missingMessage:'编号不能为空!',validType:['unique[\'${rc.contextPath}/example/person/codeUnique\',\'code\',\'id\']','length[0,32]'],invalidMessage:'编号不能重复且长度不能大于32!'" >
+                    </td>
+					
+					<td align="right">
+						<label class="textbox-label" style="text-align:right">名称:</label>
+					</td>
+					<td>
+						<input class="easyui-textbox" name="name" value="$!{peopleInfo.name}" style="width:171px;"  data-options="required:true,missingMessage:'名称不能为空!',validType:'length[0,16]',invalidMessage:'名称长度不能大于16!'" >
+					</td>
+				</tr>
+
+                <tr height="40px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">性别:</label>
+                    </td>
+                    <td>
+                        #radio_dictionary('sex', 'sex', 'TP_PERSON_SEX', $!{peopleInfo.sex})
+                    </td>
+
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">电话号码:</label>
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="telephone" value="$!{peopleInfo.telephone}" style="width:171px;"  data-options="validType:'telephone',invalidMessage:'电话号码格式不正确!'" >
+                    </td>
+                </tr>
+
+                <tr height="40px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">手机号码:</label>
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="cellphone" value="$!{peopleInfo.cellphone}" style="width:171px;" data-options="validType:'cellphone',invalidMessage:'手机号码格式不正确!'" >
+                    </td>
+
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">邮箱:</label>
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="email" value="$!{peopleInfo.email}" style="width:171px;" data-options="validType:'email'" >
+                    </td>
+                </tr>
+
+                <tr height="40px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">职务:</label>
+                    </td>
+                    <td>
+                        #combox_dictionary('duty', 'duty', '2', 'TP_PERSON_DUTY', ${peopleInfo.duty}, '', '职务不能为空!', '职务不正确!')
+                    </td>
+
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">人员状态:</label>
+                    </td>
+                    <td>
+                        #combox_dictionary('state', 'state', '2', 'TP_PERSON_STATE', ${peopleInfo.state}, '', '人员状态不能为空!', '人员状态不正确!')
+                    </td>
+                </tr>
+
+                <tr height="40px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">身份证号:</label>
+                    </td>
+                    <td>
+                        <input class="easyui-textbox" name="idCard" value="$!{peopleInfo.idCard}" style="width:171px;" data-options="validType:'idCard',invalidMessage:'身份证格式不正确!'">
+                    </td>
+                </tr>
+
+                <tr height="80px">
+                    <td align="right">
+                        <label class="textbox-label" style="text-align:right">描述:</label>
+                    </td>
+                    <td colspan="3">
+                        <input class="easyui-textbox" name="description" value="$!{peopleInfo.description}" style="height:80px;width:500px;" data-options="multiline:true, validType:'length[0,256]',invalidMessage:'描述长度不能大于256!'" >
+                    </td>
+                </tr>
+			</table>
+	    </form>
+	</div>
+</body>
+
+<script type="text/javascript">
+    function jspop_save(){
+        $("#jspopForm").form('submit', {
+            success: function(o) {
+                var data = jQuery.parseJSON(o);
+
+                if (data.status == "success") {
+                    $("input[name=id]").val(data.data);
+                    $.messager.alert('提示', data.message, 'info', function() {
+                        jspop_dialog_close("jspop_dialog");
+                    });
+                } else {
+                    $.messager.alert('提示', data.message, 'error');
+                }
+            }
+        });
+    }
+
+</script>
+</html>

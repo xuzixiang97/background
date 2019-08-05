@@ -1,0 +1,126 @@
+body{
+    background: url("../../image/login/bg.png") no-repeat;
+}
+*, *:after, *:before {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.clearfix:before, .clearfix:after {
+    content: '';
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+body {
+    color: #383a3c;
+    font-weight: 400;
+    font-size: 1em;
+    line-height: 1.25;
+    font-family: 'Raleway', Calibri, Arial, sans-serif;
+}
+
+a, button {
+    outline: none;
+}
+
+a {
+    color: #566473;
+    text-decoration: none;
+}
+
+a:hover, a:focus {
+    color: #34495e;
+}
+
+section {
+    padding: 1em;
+    text-align: center;
+}
+
+p.ref {
+    text-align: center;
+    padding: 2em 1em;
+}
+.login-box{
+    width: 580px;
+    height: 400px;
+    background: #FFFFFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -150px;
+    margin-left: -290px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border-radius: 16px;
+}
+.login{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.login-title{
+    font-size: 1.7em;
+    font-weight: 100;
+    text-align: center;
+    margin: 40px auto;
+}
+.input{
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 14px;
+    padding-left: 43px;
+}
+input:focus{
+    border: 1px solid #4792ff;
+}
+.username , .password{
+    width: 70%;
+    margin: 10px 15%;
+}
+.code{
+    margin: 10px 4% 10px 15%;
+    width: 33%;
+    float: left;
+}
+.login div{
+    position: relative;
+}
+.iconfont{
+    display: inline-block;
+    width: 40px;
+    height: 38px;
+    position: absolute;
+    top: 11px;
+    left: 88px;
+    border-radius: 5px 0 0 5px;
+    background: #f2f2f2;
+    font-size: 28px!important;
+    color: #666666;
+}
+.iconfont:before{
+    margin-left: 6px;
+}
+.code-img{
+    display: inline-block;
+    height: 40px;
+    width: 33%;
+    margin-top: 10px;
+    float: left;
+
+}
+.login-btn{
+    padding: 0;
+    color: white;
+    background: #4792ff;
+    border: 1px solid #4792ff;
+    width: 70%;
+    margin: 10px 15%;
+}

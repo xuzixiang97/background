@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+
+  <resultMap id="userAndRoleInfoResultMap" type="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+	  <result property="id" column="ID" />
+	  <result property="userId" column="USER_ID" />
+	  <result property="roleId" column="ROLE_ID" />
+  </resultMap>
+  
+  <sql id="TABLE_NAME">TP_USER_ROLE</sql>
+
+	<sql id="PAGER_CONDITION">
+		<where>
+			<if test="condition.userId!=null and condition.userId!=''">
+				AND USER_ID = = #{condition.userId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="condition.roleId!=null and condition.roleId!=''">
+				AND ROLE_ID = #{condition.roleId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="SELECT_CONDITION">
+		<where>
+			<if test="userId!=null and userId!=''">
+				AND USER_ID = #{userId, jdbcType = NUMERIC}
+			</if>
+
+			<if test="roleId!=null and roleId!=''">
+				AND ROLE_ID = #{roleId, jdbcType = NUMERIC}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="INSERT_SQL">
+		INSERT INTO <include refid="TABLE_NAME" />(
+			ID,
+			USER_ID,
+			ROLE_ID
+		)
+		VALUES(
+			#{id, jdbcType = NUMERIC},
+			#{userId, jdbcType = NUMERIC},
+			#{roleId, jdbcType = NUMERIC}
+		)
+	</sql>
+
+	<insert id="insert" databaseId="mysql" parameterType="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+			<include refid="_PUBLIC_V.SELECT_KEY" />
+		</selectKey>
+		<include refid="INSERT_SQL" />
+	</insert>
+
+	<update id="update" parameterType="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+		UPDATE <include refid="TABLE_NAME" />
+		<set>
+			USER_ID = #{userId, jdbcType = NUMERIC},
+			ROLE_ID = #{roleId, jdbcType = NUMERIC}
+		</set>
+		WHERE ID = #{id, jdbcType = NUMERIC}
+	</update>
+
+	<select id="findUserByRoleId" resultMap="userAndRoleInfoResultMap" parameterType="java.lang.Long">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ROLE_ID = #{roleId, jdbcType = NUMERIC}
+	</select>
+
+	<select id="findByUserIdAndRoleid" resultMap="userAndRoleInfoResultMap" parameterType="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+		SELECT * FROM <include refid="TABLE_NAME" /> WHERE ROLE_ID = #{roleId, jdbcType = NUMERIC}
+		AND USER_ID = #{userId, jdbcType = NUMERIC}
+	</select>
+
+	<select id="findByCondition" resultMap="userAndRoleInfoResultMap" parameterType="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+		SELECT * FROM <include refid="TABLE_NAME" />
+		<include refid="SELECT_CONDITION" />
+	</select>
+
+	<delete id="deleteByUserIdAndRoleid" parameterType="com.tempetek.business.example.userandrole.entity.UserAndRoleInfo">
+		DELETE  FROM <include refid="TABLE_NAME" /> WHERE ROLE_ID = #{roleId, jdbcType = NUMERIC}
+		AND USER_ID = #{userId, jdbcType = NUMERIC}
+	</delete>
+
+	<delete id="deleteByIds" parameterType="java.lang.Long">
+		DELETE FROM <include refid="TABLE_NAME" /> WHERE ID IN
+		<foreach item="item" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+</mapper>
